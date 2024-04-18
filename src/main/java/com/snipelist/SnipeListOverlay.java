@@ -36,18 +36,20 @@ public class SnipeListOverlay extends Overlay {
     public Dimension render(Graphics2D graphics) {
 
         // get names
-        String[] rsns = config.snipeListNames().split(",");
+        String[] rsns = config.snipeListNames().split("\\s*,\\s*");
 
         for(Player player : client.getPlayers()) {
             for (String rsn : rsns) {
-                if (Objects.equals(player.getName(), rsn)) {
+                if (Objects.requireNonNull(player.getName()).toLowerCase().replace(" ", "_").equals(rsn.toLowerCase().replace(" ", "_"))) {
 
                     final String name = Text.sanitize(rsn);
                     final int zOffset = player.getLogicalHeight() + 40;
 
                     Point textLocation = player.getCanvasTextLocation(graphics, name, zOffset);
 
-                    textLocation = new Point(textLocation.getX() + 10, textLocation.getY());
+                    if (textLocation != null) {
+                        textLocation = new Point(textLocation.getX(), textLocation.getY());
+                    }
 
                     final Polygon poly = player.getCanvasTilePoly();
                     if (poly != null)
